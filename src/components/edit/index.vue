@@ -1,423 +1,14 @@
 <template>
 <div class="edit">
-    <el-dialog class="tuwen"title="选择图文消息" :visible.sync="dialogTableVisible">
-        <el-form :inline="true">
-          <el-form-item label="名称">
-            <el-input v-model="formInline"></el-input>
-          </el-form-item>
-          <el-form-item>
-            <el-button type="primary" @click="onSubmit">查询</el-button>
-          </el-form-item>
-        </el-form>
-        <el-table
-          :data="tableData"
-          style="width: 100%">
-          <el-table-column
-            width="55">
-              <template scope="scope">
-                    <el-radio :label="scope.$index" v-model="radio" @change.native="getCurrentRow(scope.$index)"></el-radio>
-              </template>
-          </el-table-column>
-          <el-table-column
-            prop="title"
-            label="标题">
-          </el-table-column>
-          <el-table-column
-            prop="time"
-            label="上传时间">
-          </el-table-column>
-        </el-table>
-        <el-pagination class="pagination"
-        layout="prev, pager, next"
-        :total="50">
-        </el-pagination>
-        <span slot="footer" class="dialog-footer">
-            <el-button type="primary" @click="save">保存</el-button>
-            <el-button  @click="cancel">取消</el-button>
-        </span>
-    </el-dialog>
+    <Dia :dialog="dialog1" v-on:listnerFromDia="fromDia"></Dia>
+    <Dia :dialog="dialog2" v-on:listnerFromDia="fromDia"></Dia>
+    <Dia :dialog="dialog3" v-on:listnerFromDia="fromDia"></Dia>
+    <Dia :dialog="dialog4" v-on:listnerFromDia="fromDia"></Dia>
+    <Dia :dialog="dialog5" v-on:listnerFromDia="fromDia"></Dia>
+    <Dia :dialog="parentDialog" v-on:listnerFromDia="fromDia"></Dia>
+    <detail :detail="detail" v-on:listnerFromDetail="fromDetail"></detail>
 
-
-
-    <el-dialog title="选择图文"
-         class="mytuwen"
-        :visible.sync="tuWenVisible">
-        <el-form :inline="true">
-          <el-form-item label="文章标题 :">
-            <el-input v-model="formInline"></el-input>
-          </el-form-item>
-          <el-form-item>
-            <el-button type="primary" @click="onSubmit">查询</el-button>
-          </el-form-item>
-        </el-form>
-        <el-table
-          :data="tuWenData"
-          style="width: 100%">
-          <el-table-column
-            label="选择"
-            width="70">
-              <template scope="scope">
-                    <el-radio :label="scope.$index" v-model="radio" @change.native="getCurrentRow(scope.$index)">{{scope.row.radio}}</el-radio>
-              </template>
-          </el-table-column>
-          <el-table-column
-            prop="createTime"
-            label="创建时间">
-          </el-table-column>
-          <el-table-column
-            prop="articalTitle"
-            label="文章标题">
-          </el-table-column>
-          <el-table-column
-            prop="originalLink"
-            label="原文链接">
-          </el-table-column>
-          <el-table-column
-            prop="tuWenOperate"
-            label="操作">
-            <template scope="scope">
-              <el-button type="text" size="small" @click.native.prevent="deleteRow(scope.$index,tuWenData)">删除</el-button>
-            </template>
-          </el-table-column>
-        </el-table>
-        <el-pagination
-            @size-change="handleSizeChange"
-            @current-change="handleCurrentChange"
-            :current-page="currentPage4"
-            :page-sizes="[10, 20, 30, 40]"
-            :page-size="10"
-            layout="total, sizes, prev, pager, next, jumper"
-            :total="30">
-        </el-pagination>
-        <span slot="footer" class="dialog-footer">
-            <el-button type="primary" @click="tuWenSelect">保存</el-button>
-            <el-button  @click="tuWenVisible=false">取消</el-button>
-        </span>
-    </el-dialog>
-
-    <el-dialog title="选择文字"
-        :visible.sync="wordVisible"
-        size="large">
-        <el-form :inline="true">
-          <el-form-item label="文章标题 :">
-            <el-input v-model="formInline"></el-input>
-          </el-form-item>
-          <el-form-item>
-            <el-button type="primary" @click="onSubmit" icon="search">查询</el-button>
-          </el-form-item>
-        </el-form>
-        <el-table
-          :data="wordData"
-          style="width: 100%">
-          <el-table-column
-            label="选择"
-            width="70">
-              <template scope="scope">
-                    <el-radio :label="scope.$index" v-model="radio" @change.native="getCurrentRow(scope.$index)">{{scope.row.radio}}</el-radio>
-              </template>
-          </el-table-column>
-          <el-table-column
-            prop="createTime"
-            label="创建时间">
-          </el-table-column>
-          <el-table-column
-            prop="articalTitle"
-            label="标示名称">
-          </el-table-column>
-          <el-table-column
-            prop="text"
-            label="正文">
-          </el-table-column>
-          <el-table-column
-            label="操作">
-            <template scope="scope">
-              <i class="el-icon-plus"></i><el-button @click="Detail(scope)" type="text" size="small">修改</el-button>
-              <i class="el-icon-delete"></i>
-              <el-button
-                @click.native.prevent="deleteRow(scope.$index, wordData)"
-                type="text"
-                size="small">
-                删除
-              </el-button>
-            </template>
-          </el-table-column>
-        </el-table>
-        <el-pagination
-            @size-change="handleSizeChange"
-            @current-change="handleCurrentChange"
-            :current-page="currentPage4"
-            :page-sizes="[10, 20, 30, 40]"
-            :page-size="10"
-            layout="total, sizes, prev, pager, next, jumper"
-            :total="30">
-        </el-pagination>
-        <span slot="footer" class="dialog-footer">
-            <el-button type="primary" @click="save">保存</el-button>
-            <el-button  @click="cancel">取消</el-button>
-        </span>
-    </el-dialog>
-
- <el-dialog title="选择图片"  class="selectImg"
-        :visible.sync="imageVisible"
-        size="large">
-        <el-form :inline="true">
-          <el-form-item label="图片名称 :">
-            <el-input v-model="formInline"></el-input>
-          </el-form-item>
-          <el-form-item>
-            <el-button type="primary" @click="onSubmit">查询</el-button>
-          </el-form-item>
-        </el-form>
-        <el-table
-          :data="imageData"
-          style="width: 100%">
-         <el-table-column
-            label="选择"
-            width="70">
-              <template scope="scope">
-                    <el-radio :label="scope.$index" v-model="radio" @change.native="getCurrentRow(scope.$index)">{{scope.row.radio}}</el-radio>
-              </template>
-          </el-table-column>
-          <el-table-column
-            prop="createTime"
-            label="创建时间">
-          </el-table-column>
-          <el-table-column
-            prop="imageTitle"
-            label="图片名称">
-          </el-table-column>
-          <el-table-column
-            prop="image"
-            label="图片">
-            <template scope="scope">
-              <img :src="scope.row.storageAddress">
-            </template>
-          </el-table-column>
-          <el-table-column
-            prop="storageAddress"
-            label="存储地址">
-          </el-table-column>
-          <el-table-column
-            label="操作">
-            <template scope="scope">
-              <i class="el-icon-plus"></i><el-button @click="Detail(scope)" type="text" size="small">重命名</el-button>
-              <i class="el-icon-delete"></i>
-              <el-button
-                @click="confirmDelete=true"
-                type="text"
-                size="small">
-                删除
-              </el-button>
-            </template>
-          </el-table-column>
-        </el-table>
-        <el-pagination
-            @size-change="handleSizeChange"
-            @current-change="handleCurrentChange"
-            :current-page="currentPage4"
-            :page-sizes="[10, 20, 30, 40]"
-            :page-size="10"
-            layout="total, sizes, prev, pager, next, jumper"
-            :total="30">
-        </el-pagination>
-        <span slot="footer" class="dialog-footer">
-            <el-button type="primary" @click="tuWenVisible=false">保存</el-button>
-            <el-button  @click="tuWenVisible=false">取消</el-button>
-        </span>
-</el-dialog>
-
-
- <el-dialog title="选择语音"  class="selectAudio"
-        :visible.sync="audioVisible"
-        size="large">
-        <el-form :inline="true">
-          <el-form-item label="图片名称 :">
-            <el-input v-model="formInline"></el-input>
-          </el-form-item>
-          <el-form-item>
-            <el-button type="primary" @click="onSubmit">查询</el-button>
-          </el-form-item>
-        </el-form>
-        <el-table
-          :data="audioData"
-          style="width: 100%">
-          <el-table-column
-            label="选择"
-            width="70">
-              <template scope="scope">
-                    <el-radio :label="scope.$index" v-model="radio" @change.native="getCurrentRow(scope.$index)">{{scope.row.radio}}</el-radio>
-              </template>
-          </el-table-column>
-          <el-table-column
-            prop="date"
-            label="创建时间">
-          </el-table-column>
-          <el-table-column
-            prop="name"
-            label="语音名称">
-          </el-table-column>
-          <el-table-column
-            prop="address"
-            label="存储地址">
-            <template scope="scope">
-              <audio :src="scope.row.address" controls="controls"></audio>
-            </template>
-          </el-table-column>
-          <el-table-column
-            label="操作">
-            <template scope="scope">
-              <i class="el-icon-plus"></i><el-button @click="Detail(scope)" type="text" size="small">重命名</el-button>
-              <i class="el-icon-delete"></i>
-              <el-button
-                @click="confirmDelete=true"
-                type="text"
-                size="small">
-                删除
-              </el-button>
-            </template>
-          </el-table-column>
-        </el-table>
-        <el-pagination
-            @size-change="handleSizeChange"
-            @current-change="handleCurrentChange"
-            :current-page="currentPage4"
-            :page-sizes="[10, 20, 30, 40]"
-            :page-size="10"
-            layout="total, sizes, prev, pager, next, jumper"
-            :total="30">
-        </el-pagination>
-        <span slot="footer" class="dialog-footer">
-            <el-button type="primary" @click="tuWenVisible=false">保存</el-button>
-            <el-button  @click="tuWenVisible=false">取消</el-button>
-        </span>
-</el-dialog>
-
-
-
-     <el-dialog
-            :visible.sync="videoVisible"
-            size="large">
-            <el-form :inline="true">
-              <el-form-item label="视频名称 :">
-                <el-input v-model="formInline"></el-input>
-              </el-form-item>
-              <el-form-item>
-                <el-button type="primary" @click="onSubmit" icon="search">查询</el-button>
-              </el-form-item>
-            </el-form>
-            <el-table
-              :data="videoData"
-              style="width: 100%">
-              <el-table-column
-                type="selection"
-                width="55">
-              </el-table-column>
-              <el-table-column
-                prop="createTime"
-                label="创建时间">
-              </el-table-column>
-              <el-table-column
-                prop="videoName"
-                label="图片名称">
-              </el-table-column>
-              <el-table-column
-                prop="videoCover"
-                label="封面">
-              </el-table-column>
-              <el-table-column
-                prop="videoDescription"
-                label="描述">
-              </el-table-column>
-              <el-table-column
-                prop="videoAddress"
-                label="视频地址">
-              </el-table-column>
-              <el-table-column
-                label="操作">
-                <template scope="scope">
-                  <i class="el-icon-plus"></i><el-button @click="Detail(scope)" type="text" size="small">详情</el-button>
-                  <i class="el-icon-delete"></i>
-                  <el-button
-                    @click="confirmDelete=true"
-                    type="text"
-                    size="small">
-                    删除
-                  </el-button>
-                </template>
-              </el-table-column>
-            </el-table>
-            <el-pagination
-                @size-change="handleSizeChange"
-                @current-change="handleCurrentChange"
-                :current-page="currentPage4"
-                :page-sizes="[10, 20, 30, 40]"
-                :page-size="10"
-                layout="total, sizes, prev, pager, next, jumper"
-                :total="30">
-            </el-pagination>
-            <span slot="footer" class="dialog-footer">
-                <el-button type="primary" @click="tuWenVisible=false">保存</el-button>
-                <el-button  @click="tuWenVisible=false">取消</el-button>
-            </span>
-    </el-dialog>
-
-    <el-dialog
-      title="确认删除？"
-      size="tiny"
-      :visible.sync="confirmDelete"
-    >
-      <h3>是否确认删除？</h3>
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="confirmDelete = false" type="text">取 消</el-button>
-        <el-button
-          scope="scope"
-          @click.native.prevent="deleteRow(scope.$index, imageData)"
-          type="primary"
-          size="small">
-          确定
-        </el-button>
-      </span>
-    </el-dialog>
-
-    <el-popover
-      ref="popover1"
-      placement="bottom"
-      width="210"
-      trigger="click">
-        <el-button size="tiny" class="el-icon-plus" @click="tuWenVisible=true">从图文库中选择</el-button>
-    </el-popover>
-    <el-popover
-      ref="popover2"
-      placement="bottom"
-      width="210"
-      trigger="click">
-        <el-button size="small" class="el-icon-plus" @click="wordVisible=true">从文字库中选择</el-button>
-        <el-button size="small" class="el-icon-plus" @click="wordDetail">新建文字</el-button>
-    </el-popover>
-    <el-popover
-      ref="popover3"
-      placement="bottom"
-      width="210"
-      trigger="click">
-        <el-button size="small" class="el-icon-plus" @click="imageVisible=true">从图片库中选择</el-button>
-    </el-popover>
-    <el-popover
-      ref="popover4"
-      placement="bottom"
-      width="210"
-      trigger="click">
-        <el-button size="small" class="el-icon-plus" @click="audioVisible=true">从语音库中选择</el-button>
-    </el-popover>
-    <el-popover
-      ref="popover5"
-      placement="bottom"
-      width="210"
-      trigger="click">
-        <el-button size="small" class="el-icon-plus" @click="videoVisible=true">从视频库中选择</el-button>
-    </el-popover>
-
-
-   <div class="edit_left">
+    <div class="edit_left">
            <el-button type="primary" size="small" @click="editMenu">{{bianJi}}</el-button>
            <el-button type="primary" v-show="Edit" size="small" @click="noEdit">取消</el-button>
           <el-menu
@@ -429,23 +20,22 @@
               v-for="(items,Parentindex) in menu"
               :key="items.key"
               :index="items.index">
-              <template  slot="title"><i class="el-icon-menu"></i>{{items.name}}
-                    <el-popover
+              <template slot="title"><i class="el-icon-star-on"></i>{{items.name}}
+                  <!--<el-popover
                       placement="right"
                       width="270"
-                      v-model="items.visible"
                       trigger="click">
                        <el-form :inline="true"  class="demo-form-inline">
                             <el-form-item label="菜单名称">
-                              <el-input v-model="caidanbianji1"  placeholder="请输入修改的菜单名称"></el-input>
+                              <el-input v-model="menueEdit"  placeholder="请输入修改的菜单名称"></el-input>
                             </el-form-item>
                              <el-form-item>
-                                <el-button size="small" type="primary" @click="xiugaicaidan(items,Parentindex)">完成</el-button>
-                                <el-button size="small" @click="xiugaicaidan(items,Parentindex)">取消</el-button>
+                                <el-button size="small"type="primary" @click="xiugaicaidan">完成</el-button>
+                                <el-button size="small" >取消</el-button>
                             </el-form-item>
-                        </el-form >
-                        <el-button type="text" size="small" v-show="menuShow" slot="reference">编辑</el-button>
-                    </el-popover>
+                        </el-form >-->
+                      <el-button type="text" size="small" v-show="menuShow" @click.stop="editParent(Parentindex,items)">编辑</el-button>
+                    <!--</el-popover>-->
                     <el-button type="text" size="small" v-show="menuShow" @click.stop="deleteEvent(Parentindex,'parent',null,items,menu)">删除</el-button>
                     <template v-if="Parentindex == 0 && Parentindex !==  Object.keys(menu).length - 1">
                         <el-button type="text" size="small" v-show="menuShow" @click.stop="buttonEvent(Parentindex,'parent',null, items, menu)">下移</el-button>
@@ -458,7 +48,7 @@
                         <el-button type="text" size="small" v-show="menuShow" @click.stop="topEvent(Parentindex,'parent',null, items ,menu)">上移</el-button>
                     </template>
               </template>
-                <template v-if="items.children">
+              <template v-if="items.children">
                    <el-menu-item
                        v-for="(children,index) in items.children"
                        :key="children.key"
@@ -482,10 +72,10 @@
    <div class="edit_right">
       <div class="con">
         <div class="menu_xq">
-          <span class="menu_xq_wz">菜单详情</span>
-          <el-button type="primary" size="small" v-show="build">新建</el-button>
+          <span class="menu_xq_wz">{{caidantitle}}</span>
+          <el-button type="primary" size="small" v-show="build" @click="buildNew">新建菜单</el-button>
         </div>
-        <el-form  v-model="form.labelPosition"  label-width="80px">
+        <el-form class="caidan" v-model="form.labelPosition"  label-width="80px">
           <el-form-item
                 v-for="(data,index) in handle"
                 :key="data.label"
@@ -495,6 +85,7 @@
                v-if="data.select"
                placeholder="无">
               <el-option
+                :disabled="disabled"
                 v-for="item in data.select"
                 :key="item.label"
                 :label="item.label"
@@ -502,49 +93,63 @@
               </el-option>
             </el-select>
             <el-radio-group
+             :disabled="disabled"
               v-else-if="data.radio"
-              v-model="form.resource"
+              v-model="radio"
               @change="openLink">
-                  <el-radio class="radio" v-model="radio" label="1">打开链接</el-radio>
-                  <el-radio class="radio" v-model="radio" label="2">回复消息</el-radio>
-              </el-radio-group>
-            <el-input v-else-if="data.name"  v-model="activeIndex" ></el-input>
+                  <el-radio class="radio"  :label="1">打开链接</el-radio>
+                  <el-radio class="radio"  :label="2">回复消息</el-radio>
+            </el-radio-group>
+            <el-input v-else-if="data.name" :disabled="disabled" v-model="activeIndex" ></el-input>
+            <el-input v-else-if="data.parent" :disabled="disabled" v-model="myParent" ></el-input>
           </el-form-item >
           <el-form-item
               v-show="openLink_url"
               label="链接网址">
-             <el-input  v-model="form.url" ></el-input>
-                <el-button  type="text" @click="dialogTableVisible=true">选择图文消息地址</el-button>
+             <el-input :disabled="disabled" v-model="form.url" ></el-input>
+                <el-button v-show="noEditcaidan" type="text" @click="dialog1.dialogTableVisible=true">选择图文消息地址</el-button>
           </el-form-item>
           <el-form-item
             v-show="hfxx"
             label="回复消息">
-            <el-button size="small" v-popover:popover1>图文</el-button>
-            <el-button size="small" v-popover:popover2>文字</el-button>
-            <el-button size="small" v-popover:popover3>图片</el-button>
-            <el-button size="small" v-popover:popover4>语音</el-button>
-            <el-button size="small" v-popover:popover5>视频</el-button>
+            <el-popover
+                placement="bottom"
+                v-model="popover.popover1"
+                trigger="click">
+                  <el-button size="small" class="el-icon-plus" @click="dialog2.dialogTableVisible=true">从图文库中选择</el-button>
+                  <el-button size="small" slot="reference" >图文</el-button>
+              </el-popover>
+            <el-popover
+                placement="bottom"
+                v-model="popover.popover2"
+                trigger="click">
+                  <el-button size="small" class="el-icon-plus" @click="dialog3.dialogTableVisible=true">从文字库中选择</el-button>
+                  <el-button size="small" slot="reference" >文字</el-button>
+              </el-popover>
+              <el-popover
+                placement="bottom"
+                v-model="popover.popover3"
+                trigger="click">
+                  <el-button size="small" class="el-icon-plus" @click="dialog1.dialogTableVisible=true">从图片库中选择</el-button>
+                  <el-button size="small" slot="reference" >图片</el-button>
+              </el-popover>
+            <el-popover
+                placement="bottom"
+                v-model="popover.popover4"
+                trigger="click">
+                  <el-button size="small" class="el-icon-plus" @click="dialog4.dialogTableVisible=true">从语音库中选择</el-button>
+                  <el-button size="small" slot="reference" >语音</el-button>
+              </el-popover>
+            <el-popover
+                placement="bottom"
+                v-model="popover.popover5"
+                trigger="click">
+                  <el-button size="small" class="el-icon-plus" @click="dialog5.dialogTableVisible=true">从视频库中选择</el-button>
+                  <el-button size="small" slot="reference" >视频</el-button>
+              </el-popover>
           </el-form-item>
-
-
-          <el-dialog
-            title="提示"
-            :visible.sync="wordDialogVisible"
-            size="large">
-              <el-form label-position="top" v-show="wordDetails" >
-                  <el-form-item label="标识名称">
-                      <el-input v-model="title"></el-input>
-                  </el-form-item>
-                  <el-form-item label="正文">
-                      <el-input v-model="content"></el-input>
-                  </el-form-item>
-              </el-form>
-            <span slot="footer" class="dialog-footer">
-              <el-button type="primary" @click="wordDialogVisible = false">保存</el-button>
-              <el-button @click="wordDialogVisible = false">取 消</el-button>
-            </span>
-          </el-dialog>
-          <el-form-item>
+          <car :car="carData" v-show="mycar"></car>
+          <el-form-item v-show="menuShow">
               <el-button type="primary" >完成</el-button>
               <el-button >取消</el-button>
           </el-form-item>
@@ -556,20 +161,52 @@
 </template>
 
 <script>
+import Dia from '../public/dialog'
+import car from '../public/car'
+import detail from '../public/detail'
 export default {
   name: 'edit',
   data () {
     return {
-      wordDetails:false,
+      disabled:true,
+      noEditcaidan:false,
+      caidantitle:"菜单详情",
       menuShow:false,
+      myParent:"",
+      popover:{
+        popover1:false,
+        popover2:false,
+        popover3:false,
+        popover4:false,
+        popover5:false
+      },
+      carData:{
+          show:true,
+          button:this.menuShow,
+          // wenzi:{
+          //   content:"欢迎关注家视天下！回复一下【关键词】获取您想要的内容：【菜单】获取功能菜单列表；【红包】领取关注红包；【调研问券】填写用户调研问券；"
+          // },
+          img:{
+            createTime:"2017-9-09",
+            imgurl:"http://www.appllen.com/wp-content/uploads/2016/12/174010-1.jpg",
+            imgName:"我的标题",
+            store:'shfdsfhsjdfhsjdfhsjl'
+          },
+          // audio:{
+          //   audiourl:"http://www.appllen.com/wp-content/uploads/2016/12/174010-1.jpg",
+          //   title:"我的音频"
+          // },
+          // vedio:{
+          //   vediourl:"http://www.appllen.com/wp-content/uploads/2016/12/174010-1.jpg",
+          //   title:"我的视频"
+          // }
+      },
+      wordDetails:false,
       activeIndex: '遥控器',
       Edit:false,
-      caidanbianji1:'',
-      caidanbianji2:'',
-      caidanbianji3:'',
-      radio: '',
-      popover:false,
-      tuWenChosen:'',
+      radio: 1,
+      mycar:true,
+      menueEdit:'',
       dialogTableVisible:false,
       openLink_url:false,
       hfxx:false,
@@ -579,237 +216,496 @@ export default {
       currentPage2: 5,
       currentPage3: 5,
       currentPage4: 4,
-      audioVisible:false,
-      imageVisible:false,
       wordVisible:false,
       wordDialogVisible:false,
-      confirmDelete:false,
-      videoVisible:false,
-      tuWenThumbnail:false,
-      tableData:[
-        {
-          title:"标题一",
-          time:"2018-12-01"
-        },
-         {
-          title:"标题一",
-          time:"2018-12-01"
-        },
-         {
-          title:"标题一",
-          time:"2018-12-01"
-        }, {
-          title:"标题一",
-          time:"2018-12-01"
+      parentDialog:{
+        class:"caidan",
+        title:"修改父级菜单",
+        dialogTableVisible:false,
+        label:"修改菜单名称：",
+        size:"tiny",
+        caidanEdit:true,
+        caidan:{}
+      },
+      dialog5:{
+        class:"viedio",
+        title:"选择视频",
+        dialogTableVisible:false,
+        label:"视频名称",
+        table:{
+            tableHead:[
+              {
+                  label:"选择",
+                  select:true,
+                  width:65
+              },
+              {
+                prop:"createTime",
+                label:"创建时间"
+              },
+              {
+                prop:"vidioName",
+                label:"视频名称"
+              },
+              {
+                prop:"imgurl",
+                label:"视频封面",
+                img:true
+              },
+              {
+                prop:"vidiourl",
+                video:true,
+                label:"视频"
+              },
+              {
+                prop:"store",
+                label:"存储地址",
+                width:300
+              }
+            ],
+            tableData:[
+              {
+                vidioName:"视频名称",
+                createTime:"2018-12-01",
+                imgurl:'http://www.appllen.com/wp-content/uploads/2017/03/986108.png',
+                vidiourl:"",
+                store:'http://www.w3school.com.cn/i/song.mp3',
+                type:"vidio"
+              },
+              {
+                vidioName:"视频名称",
+                createTime:"2018-12-01",
+                imgurl:'http://www.appllen.com/wp-content/uploads/2017/04/1028198.png',
+                vidiourl:"",
+                store:'http://www.w3school.com.cn/i/song.mp3',
+                type:"vidio"
+              },
+              {
+                vidioName:"视频名称",
+                createTime:"2018-12-01",
+                vidiourl:"",
+                imgurl:'http://www.appllen.com/wp-content/uploads/2017/03/986108.png',
+                store:'http://www.w3school.com.cn/i/song.mp3',
+                type:"vidio"
+              },
+              {
+                 vidioName:"视频名称",
+                 vidiourl:"",
+                createTime:"2018-12-01",
+                imgurl:'http://www.appllen.com/wp-content/uploads/2017/03/986108.png',
+                store:'http://www.w3school.com.cn/i/song.mp3',
+                type:"vidio"
+              }
+            ]
         }
-      ],
-      audioData:[
-        {
-          date:"2012-11-02",
-          name:"sadasdasasd",
-          address:"http://demo.mimvp.com/html5/take_you_fly.ogg"
-        },{
-          date:"2012-11-02",
-          name:"sadasdasasd",
-          address:"http://demo.mimvp.com/html5/take_you_fly.ogg"
-        },{
-          date:"2012-11-02",
-          name:"sadasdasasd",
-          address:"http://demo.mimvp.com/html5/take_you_fly.ogg"
-        },{
-          date:"2012-11-02",
-          name:"sadasdasasd",
-          address:"http://demo.mimvp.com/html5/take_you_fly.ogg"
-        },{
-          date:"2012-11-02",
-          name:"sadasdasasd",
-          address:"http://demo.mimvp.com/html5/take_you_fly.ogg"
+      },
+      dialog4:{
+        class:"audio",
+        title:"选择语音",
+        dialogTableVisible:false,
+        label:"语音名称",
+        table:{
+            tableHead:[
+              {
+                  label:"选择",
+                  select:true,
+                  width:65
+              },
+              {
+                prop:"createTime",
+                label:"创建时间"
+              },
+              {
+                prop:"audioName",
+                label:"语音名称"
+              },
+              {
+                prop:"audiourl",
+                audio:true,
+                label:"语音",
+              },
+              {
+                prop:"store",
+                label:"存储地址",
+                width:300
+              }
+            ],
+            tableData:[
+              {
+                audioName:"语音名称",
+                createTime:"2018-12-01",
+                audiourl:'http://www.appllen.com/wp-content/uploads/2017/03/986108.png',
+                store:'http://www.w3school.com.cn/i/song.mp3',
+                type:"audio"
+              },
+              {
+                audioName:"语音名称",
+                createTime:"2018-12-01",
+                audiourl:'http://www.appllen.com/wp-content/uploads/2017/04/1028198.png',
+                store:'http://www.w3school.com.cn/i/song.mp3',
+                type:"audio"
+              },
+              {
+                audioName:"语音名称",
+                createTime:"2018-12-01",
+                audiourl:'http://www.appllen.com/wp-content/uploads/2017/03/986108.png',
+                store:'http://www.w3school.com.cn/i/song.mp3',
+                type:"audio"
+              },
+              {
+                 audioName:"语音名称",
+                createTime:"2018-12-01",
+                audiourl:'http://www.appllen.com/wp-content/uploads/2017/03/986108.png',
+                store:'http://www.w3school.com.cn/i/song.mp3',
+                type:"audio"
+              }
+            ]
         }
-      ],
+      },
+      dialog1:{
+        class:"img",
+        title:"选择图片",
+        dialogTableVisible:false,
+        label:"图片名称",
+        table:{
+            tableHead:[
+              {
+                  label:"选择",
+                  select:true,
+                  width:65
+              },
+              {
+                prop:"createTime",
+                label:"创建时间"
+              },
+              {
+                prop:"imgName",
+                label:"图片名称"
+              },
+              {
+                prop:"imgurl",
+                img:true,
+                label:"图片",
+              },
+              {
+                prop:"store",
+                label:"存储地址",
+                width:300
+              }
+            ],
+            tableData:[
+              {
+                imgName:"图片名称",
+                createTime:"2018-12-01",
+                imgurl:'http://www.appllen.com/wp-content/uploads/2017/03/986108.png',
+                store:'http://www.appllen.com/wp-content',
+                type:"img"
+              },
+              {
+                imgName:"图片名称",
+                createTime:"2018-12-01",
+                imgurl:'http://www.appllen.com/wp-content/uploads/2017/04/1028198.png',
+                store:'http://www.appllen.com/wp-content',
+                type:"img"
+              },
+              {
+                 imgName:"图片名称",
+                createTime:"2018-12-01",
+                imgurl:'http://www.appllen.com/wp-content/uploads/2017/03/986108.png',
+                store:'http://www.appllen.com/wp-content',
+                 type:"img"
+              },
+              {
+                imgName:"图片名称",
+                createTime:"2018-12-01",
+                imgurl:'http://www.appllen.com/wp-content/uploads/2017/04/1028198.png',
+                store:'http://www.appllen.com/wp-content',
+                type:"img"
+              }
+            ]
+        },
+        total:"50"
+      },
+      dialog2:{
+        class:"tuwen",
+        title:"选择图文",
+        dialogTableVisible:false,
+        label:"文章标题",
+        table:{
+          tableHead:[
+            {
+                lable:"选择",
+                select:true,
+                width:55
+            },
+            {
+              prop:"createTime",
+              label:"创建时间"
+            },
+            {
+              prop:"articalTitle",
+              label:"文章标题"
+            },
+            {
+              prop:"originalLink",
+              label:"原文链接",
+              width:300
+            },
+            {
+              prop:"wordOperate",
+              wordOperate:true,
+              label:"操作"
+            }
+          ],
+          tableData:[
+            {
+              createTime:"12-01",
+              articalTitle:"wenzhangbiaoti",
+              originalLink:"http://www.appllen.com/wp-content/uploads/2017/01/444294.jpg",
+              tuWenOperate:"详情",
+               type:"tuwen"
+            },
+            {
+              createTime:"12-0222",
+              articalTitle:"wenzhangbiaoti",
+              originalLink:"http://www.appllen.com/wp-content/uploads/2017/01/444294.jpg",
+              tuWenOperate:"详情",
+               type:"tuwen"
+            },
+            {
+              createTime:"12-01",
+              articalTitle:"wenzhangbiaoti",
+              originalLink:"http://www.appllen.com/wp-content/uploads/2017/01/444294.jpg",
+              tuWenOperate:"详情",
+               type:"tuwen"
+            },
+            {
+              createTime:"12-01",
+              articalTitle:"wenzhangbiaoti",
+              originalLink:"http://www.appllen.com/wp-content/uploads/2017/01/444294.jpg",
+              tuWenOperate:"详情",
+               type:"tuwen"
+            },
+            {
+              createTime:"12-01",
+              articalTitle:"wenzhangbiaoti",
+              originalLink:"http://www.appllen.com/wp-content/uploads/2017/01/444294.jpg",
+              tuWenOperate:"详情",
+               type:"tuwen"
+            },
+          ]
+        }
+      },
+      dialog3:{
+        class:"wenzi",
+        title:"选择文字",
+        dialogTableVisible:false,
+        label:"文章标题",
+        table:{
+          tableHead:[
+            {
+                type:"selection",
+                width:55
+            },
+            {
+              prop:"createTime",
+              label:"创建时间"
+            },
+            {
+              prop:"articalTitle",
+              label:"文章标题"
+            },
+            {
+              prop:"originalLink",
+              label:"原文链接"
+            },
+            {
+              prop:"wordOperate",
+              wordOperate:true,
+              label:"操作"
+            }
+          ],
+          tableData:[
+            {
+              createTime:"12-01",
+              articalTitle:"wenzhangbiaoti",
+              originalLink:"www.xxxx.com/xxx=12312",
+              tuWenOperate:"详情",
+              type:"wenzi"
+            },
+            {
+              createTime:"12-0222",
+              articalTitle:"wenzhangbiaoti",
+              originalLink:"www.xxxx.com/xxx545454545=12312",
+              tuWenOperate:"详情",
+               type:"wenzi"
+            },
+            {
+              createTime:"12-01",
+              articalTitle:"wenzhangbiaoti",
+              originalLink:"www.xxxx.com/xxx=rd12345454454512",
+              tuWenOperate:"详情",
+               type:"wenzi"
+            },
+            {
+              createTime:"12-01",
+              articalTitle:"wenzhangbiaoti",
+              originalLink:"www.xxxx.com/xxx=12sadsad312",
+              tuWenOperate:"详情",
+               type:"wenzi"
+            },
+            {
+              createTime:"12-01",
+              articalTitle:"wenzhangbiaoti",
+              originalLink:"www.xxxx.com/xxx=123sdsadds12",
+              tuWenOperate:"详情",
+               type:"wenzi"
+            },
+          ]
+        }
+      },
+      detail:{
+        title:"提示",
+        wordDialogVisible:false,
+        // from:[
+        //   {
+        //     label:"标识名称",
+        //     model:"title"
+        //   },
+        //   {
+        //     label:"正文",
+        //     model:"content"
+        //   }
+        // ]
+
+
+      },
+
+      // table:{
+      //   tableHead:[
+      //     {
+      //         type:"selection",
+      //         width:55
+      //     },
+      //     {
+      //       prop:"title",
+      //       label:"标题"
+      //     },
+      //     {
+      //       prop:"time",
+      //       label:"上传时间"
+      //     }
+
+      //   ],
+      //   tableData:[
+      //     {
+      //       title:"标题一",
+      //       time:"2018-12-01"
+      //     },
+      //     {
+      //       title:"标题一",
+      //       time:"2018-12-01"
+      //     },
+      //     {
+      //       title:"标题一",
+      //       time:"2018-12-01"
+      //     }, {
+      //       title:"标题一",
+      //       time:"2018-12-01"
+      //     }
+      //   ]
+      // },
+      // tableData:[
+      //   {
+      //     title:"标题一",
+      //     time:"2018-12-01"
+      //   },
+      //    {
+      //     title:"标题一",
+      //     time:"2018-12-01"
+      //   },
+      //    {
+      //     title:"标题一",
+      //     time:"2018-12-01"
+      //   }, {
+      //     title:"标题一",
+      //     time:"2018-12-01"
+      //   }
+      // ],
       wordData:[
         {
           createTime:"12-031",
           articalTitle:"wenzhangbiaoti",
-          text:"我们自定义了一些对象，这些对象有一些包含了不可枚举的属性,另外注意使用 Object.defineProperty 初始化的对象默认是不可枚举的属性。对于可枚举的对象我们可以直接使用Object.keys()获得,或者使用for-in循环遍历出来."
-      },{
-          createTime:"12-031",
-          articalTitle:"wenzhangbiaoti",
-          text:"对于不可枚举的属性，使用Object.assign的时候将被自动忽略。"
-      },{
-          createTime:"12-031",
-          articalTitle:"wenzhangbiaoti",
-          text:"对于只读的属性，当分配新的对象覆盖他的时候，将抛出异常:"
-      },{
-          createTime:"12-031",
-          articalTitle:"wenzhangbiaoti",
-          text:"这里我们简单的看下如何实现es5版本的Object.assign："
-      },{
-          createTime:"12-031",
-          articalTitle:"wenzhangbiaoti",
-          text:"判断是否原生支持该函数，如果不存在的话创建一个立即执行函数，该函数将创建一个assign函数绑定到Object上"
-      },{
-          createTime:"12-031",
-          articalTitle:"wenzhangbiaoti",
-          text:"欢迎关注家视天下！回复一下【关键词】获取您想要的内容：【菜单】获取功能菜单列表；【红包】领取关注红包；【调研问券】填写用户调研问券"
-      }],
-      tuWenData:[
-        {
-          createTime:"12-01",
-          articalTitle:"shdjks577777",
           originalLink:"www.xxxx.com/xxx=12312",
-          tuWenOperate:"详情",
-          radio:""
-        },
-        {
-          createTime:"12-0222",
-          articalTitle:"87d897sad",
-          originalLink:"www.xxxx.com/xxx545454545=12312",
-          tuWenOperate:"详情",
-          radio:""
-        },
-        {
-          createTime:"12-01",
-          articalTitle:"989gjgh89asd8",
-          originalLink:"www.xxxx.com/xxx=rd12345454454512",
-          tuWenOperate:"详情",
-          radio:""
-        },
-        {
+          wordOperate:["详情","删除"]
+      },{
           createTime:"12-01",
           articalTitle:"wenzhangbiaoti",
-          originalLink:"www.xxxx.com/xxx=12sadsad312",
-          tuWenOperate:"详情",
-          radio:""
-        },
-        {
+          originalLink:"www.xxxx.com/xxx=12312",
+          tuWenOperate:["详情","删除"]
+      },{
           createTime:"12-01",
-          articalTitle:"54sasadas",
-          originalLink:"www.xxxx.com/xxx=123sdsadds12",
-          tuWenOperate:"详情",
-          radio:""
-        },
-        {
+          articalTitle:"wenzhangbiaoti",
+          originalLink:"www.xxxx.com/fsdfdsxx=12312",
+          tuWenOperate:["详情","删除"]
+      },{
           createTime:"12-01",
-          articalTitle:"54sasadas",
-          originalLink:"www.xxxx.com/xxx=123sdsadds12",
-          tuWenOperate:"详情",
-          radio:""
-        },
-        {
+          articalTitle:"wenzhangbiaoti",
+          originalLink:"www.xxxx.com/xxx=12312",
+          tuWenOperate:["详情","删除"]
+      },{
           createTime:"12-01",
-          articalTitle:"54sasadas",
-          originalLink:"www.xxxx.com/xxx=123sdsadds12",
-          tuWenOperate:"详情",
-          radio:""
-        },
-        {
+          articalTitle:"wenzhangbiaoti",
+          originalLink:"www.xxxx.com/xxx=12312",
+          tuWenOperate:["详情","删除"]
+      },{
           createTime:"12-01",
-          articalTitle:"54sasadas",
-          originalLink:"www.xxxx.com/xxx=123sdsadds12",
-          tuWenOperate:"详情",
-          radio:""
-        },
-        {
+          articalTitle:"wenzhangbiaoti",
+          originalLink:"www.xxxx.com/xxx=12312",
+          tuWenOperate:["详情","删除"]
+      },{
           createTime:"12-01",
-          articalTitle:"54sasadas",
-          originalLink:"www.xxxx.com/xxx=123sdsadds12",
-          tuWenOperate:"详情",
-          radio:""
-        },
-        {
-          createTime:"12-01",
-          articalTitle:"54sasadas",
-          originalLink:"www.xxxx.com/xxx=123sdsadds12",
-          tuWenOperate:"详情",
-          radio:""
-        }
-      ],
-      videoData:[
-        {
-        createTime:"new Date().getTime().toUTCString()",
-        videoName:"不知道不知道",
-        videoCover:"shjkdhskahdkasdjj",
-        videoDescription:"toUTCString 方法返回一个 String 对象，此对象中包含了 UTC 惯例格式的日期，以一种简便、易读的形式表示。",
-        videoAddress:"必需的 dateObj 引用是任何 Date 对象。"
-        },
-        {
-        createTime:"new Date().getTime().toUTCString()",
-        videoName:"不知道不知道",
-        videoCover:"shjkdhskahdkasdjj",
-        videoDescription:"toUTCString 方法返回一个 String 对象，此对象中包含了 UTC 惯例格式的日期，以一种简便、易读的形式表示。",
-        videoAddress:"必需的 dateObj 引用是任何 Date 对象。"
-        },
-        {
-        createTime:"new Date().getTime().toUTCString()",
-        videoName:"不知道不知道",
-        videoCover:"shjkdhskahdkasdjj",
-        videoDescription:"toUTCString 方法返回一个 String 对象，此对象中包含了 UTC 惯例格式的日期，以一种简便、易读的形式表示。",
-        videoAddress:"必需的 dateObj 引用是任何 Date 对象。"
-        },
-        {
-        createTime:"new Date().getTime().toUTCString()",
-        videoName:"不知道不知道",
-        videoCover:"shjkdhskahdkasdjj",
-        videoDescription:"toUTCString 方法返回一个 String 对象，此对象中包含了 UTC 惯例格式的日期，以一种简便、易读的形式表示。",
-        videoAddress:"必需的 dateObj 引用是任何 Date 对象。"
-        }
-      ],
-      imageData:[
-        {
-          createTime:"2011-11-02",
-          imageTitle:"图片标题1111",
-          image:"td中input文本输入到达边界时如何自动换行 - ITeye问答",
-          storageAddress:"http://www.appllen.com/wp-content/uploads/2017/04/977748.png"
-        },
-        {
-          createTime:"2011-11-02",
-          imageTitle:"图片标题1111",
-          image:"td中input文本输入到达边界时如何自动换行 - ITeye问答",
-          storageAddress:"http://www.appllen.com/wp-content/uploads/2017/04/977748.png"
-        },
-        {
-          createTime:"2011-11-02",
-          imageTitle:"图片标题1111",
-          image:"td中input文本输入到达边界时如何自动换行 - ITeye问答",
-          storageAddress:"http://www.appllen.com/wp-content/uploads/2017/04/977748.png"
-        },
-        {
-          createTime:"2011-11-02",
-          imageTitle:"图片标题1111",
-          image:"td中input文本输入到达边界时如何自动换行 - ITeye问答",
-          storageAddress:"http://www.appllen.com/wp-content/uploads/2017/04/977748.png"
-        },
-        {
-          createTime:"2011-11-02",
-          imageTitle:"图片标题1111",
-          image:"td中input文本输入到达边界时如何自动换行 - ITeye问答",
-          storageAddress:"http://www.appllen.com/wp-content/uploads/2017/04/977748.png"
-        },
-        {
-          createTime:"2011-11-04",
-          imageTitle:"图片标题1111",
-          image:"youxiehuayijingbuneng色粉色的粉色的xian爱多tg - ITeye问答",
-          storageAddress:"http://www.appllen.com/wp-content/uploads/2017/04/977748.png"
-        },
-        {
-          createTime:"2011-11-02",
-          imageTitle:"图片标题1111",
-          image:"递四方速递方式 - ITeye问答",
-          storageAddress:"http://www.appllen.com/wp-content/uploads/2017/04/977748.png"
-        },
-        {
-          createTime:"2011-11-02",
-          imageTitle:"图片标题1111",
-          image:"dgdg - 合格机构合计",
-          storageAddress:"http://www.appllen.com/wp-content/uploads/2017/04/977748.png"
-        }
-      ],
+          articalTitle:"wenzhangbiaoti",
+          originalLink:"www.xxxx.com/xxx=12312",
+          tuWenOperate:["详情","删除"]
+      }],
+      // tuWenData:[
+      //   {
+      //     createTime:"12-01",
+      //     articalTitle:"wenzhangbiaoti",
+      //     originalLink:"www.xxxx.com/xxx=12312",
+      //     tuWenOperate:"详情"
+      //   },
+      //   {
+      //     createTime:"12-0222",
+      //     articalTitle:"wenzhangbiaoti",
+      //     originalLink:"www.xxxx.com/xxx545454545=12312",
+      //     tuWenOperate:"详情"
+      //   },
+      //   {
+      //     createTime:"12-01",
+      //     articalTitle:"wenzhangbiaoti",
+      //     originalLink:"www.xxxx.com/xxx=rd12345454454512",
+      //     tuWenOperate:"详情"
+      //   },
+      //   {
+      //     createTime:"12-01",
+      //     articalTitle:"wenzhangbiaoti",
+      //     originalLink:"www.xxxx.com/xxx=12sadsad312",
+      //     tuWenOperate:"详情"
+      //   },
+      //   {
+      //     createTime:"12-01",
+      //     articalTitle:"wenzhangbiaoti",
+      //     originalLink:"www.xxxx.com/xxx=123sdsadds12",
+      //     tuWenOperate:"详情"
+      //   },
+      // ],
       openeds:["精华","服务","个人中心"],
       handle:[
         {
           label:"上级菜单",
           modle:"",
-
           select:[
            {
              label:"精华",
@@ -845,6 +741,70 @@ export default {
         //   label:"链接网址"
         // }
       ],
+      handle1:[
+        {
+          label:"上级菜单",
+          modle:"",
+          select:[
+           {
+             label:"精华",
+             value:"dff"
+           },
+           {
+             label:"服务",
+             value:"erere"
+           },
+           {
+             label:"个人中心",
+             value:"sfsd"}
+
+          ]
+        },
+        {
+          name:true,
+          label:"名称"
+        },
+        {
+          label:"交互类型",
+          radio:[
+            {
+              label:"打开链接",
+            },
+            {
+              label:"回复消息"
+            }
+          ]
+        }
+        // {
+        //   url:true,
+        //   label:"链接网址"
+        // }
+      ],
+      handle2:[
+        {
+          label:"上级菜单",
+          parent:true
+        },
+        {
+          name:true,
+          label:"名称"
+        },
+        {
+          label:"交互类型",
+          radio:[
+            {
+              label:"打开链接",
+            },
+            {
+              label:"回复消息"
+            }
+          ]
+        }
+        // {
+        //   url:true,
+        //   label:"链接网址"
+        // }
+      ],
       build:false,
       bianJi:'编辑',
       title:"",
@@ -852,7 +812,7 @@ export default {
       form:{
         labelPosition:'right',
         resource:'打开链接',
-        regin:'',
+        regin:'精华',
         name:'',
         url:'www.baidu.com',
       },
@@ -860,7 +820,6 @@ export default {
         {
           name:"精华",
           index:"精华",
-          visible:false,
           key:"1",
           children:[
                 {
@@ -888,7 +847,6 @@ export default {
         {
           name:"服务",
           index:"服务",
-          visible:false,
           key:"2",
           children:[
               {
@@ -906,7 +864,6 @@ export default {
         {
           name:"个人中心",
           index:"个人中心",
-          visible:false,
           key:"3",
           children:[
               {
@@ -925,6 +882,9 @@ export default {
     }
   },
   components:{
+   Dia,
+   detail,
+   car
   },
   created(){
 
@@ -966,21 +926,83 @@ export default {
     handleCurrentChange(val) {
       console.log(`当前页: ${val}`);
     },
+    handleClose(){
+
+    },
+    fromDetail(data){
+          console.log("fromDetail")
+          console.log(fromDetail)
+    },
+    //监听Dia组件传过来的数据
+    fromDia(data){
+
+        console.log("from child")
+
+        if(data.type == "tuwen"){
+          delete this.carData.img
+          delete this.carData.wenzi
+          delete this.carData.audio
+          delete this.carData.vedio
+          this.carData.tuwen = data
+          this.carData = Object.assign({}, this.carData)
+        }
+        if(data.type == "img"){
+          delete this.carData.tuwen
+          delete this.carData.wenzi
+          delete this.carData.audio
+          delete this.carData.vedio
+
+          this.carData.img = data
+         this.carData = Object.assign({}, this.carData)
+        }
+        if(data.type == "audio"){
+           delete this.carData.tuwen
+          delete this.carData.img
+          delete this.carData.vedio
+          delete this.carData.wenzi
+          this.carData.audio = data
+          this.carData = Object.assign({},  this.carData)
+        }
+        if(data.type == "vedio"){
+          delete this.carData.tuwen
+          delete this.carData.img
+          delete this.carData.audio
+          delete this.carData.wenzi
+          this.carData.vedio = data
+          this.carData = Object.assign({},  this.carData)
+        }
+        if(data.type == "wenzi"){
+          delete this.carData.tuwen
+          delete this.carData.img
+          delete this.carData.audio
+          delete this.carData.vedio
+          this.carData.wenzi = data
+          this.carData = Object.assign({},  this.carData)
+
+        }
+        console.log(this.carData)
+        this.dialog1.dialogTableVisible = data.dialogTableVisible
+
+
+    },
+    editParent(index,data){
+      this.parentDialog.caidan = data
+      this.parentDialog.dialogTableVisible = true
+      console.log(index)
+      console.log(data)
+    },
     handleSelect(index,indexPath){
-        this.form.name =  index
+        console.log("skfjsdkjfdskjgfsdkgjskl;hgksg")
+        console.log(this.activeIndex)
+        this.activeIndex =  index
         this.form.regin = indexPath[0]
 
     },
     deleteRow(index, rows) {
-      rows.splice(index, 1)
+      rows.splice(index, 1);
     },
     shuliqi(){
       console.log("ksfjsdkf")
-    },
-    tuWenSelect(){
-      this.tuWenVisible = false
-      this.tuWenThumbnail = true
-      //this.tuWenChosen=tuWenVisible.o nClose(data,key)
     },
     deleteEvent(Index,type,ParentIndex,now,data){
        let index = parseInt(Index)
@@ -1010,23 +1032,21 @@ export default {
       let Parentindex = parseInt(ParentIndex)
       this.menue(index,type,Parentindex,first,data)
     },
-    xiugaicaidan(data,index){
-      console.log(index)
-      console.log(this.caidanbianji1)
-      if(this.caidanbianji1 !== ""){
-            data.name = this.caidanbianji1
-
-      }
-      data.visible = false
-      this.menu[index] = data
-
-      this.menu = Object.assign({}, this.menu);
-      this.caidanbianji1 = ''
-    },
     noEdit(){
+        this.handle = this.handle1
+        this.activeIndex = "遥控器"
+        this.radio = 1
+         this.form.url = "www.baidu.com"
+         this.noEditcaidan = false
+         this.mycar = true
         this.menuShow = false
         this.Edit = false
+
         this.build = false
+        this.disabled = true
+        this.caidantitle = "菜单详情"
+        this.carData.button = false
+        this.bianJi = "编辑"
     },
     wordDetail(){
       this.wordVisible=false
@@ -1034,36 +1054,57 @@ export default {
       this.wordDialogVisible=true
     },
     Detail(data){
-      //console.log(data)
-      this.wordVisible = false
-      this.wordDetails = true
-      this.wordDialogVisible = true
+      console.log(data)
+      this.wordVisible=false
+      this.wordDetails=true
+      this.wordDialogVisible=true
       this.title = data.row.articalTitle
-      this.content = data.row.text
+      this.content = data.row.originalLink
      },
-
+    xiugaicaidan(){
+        console.log("修改菜单")
+    },
     onSubmit(){
       console.log(this.formInline)
+    },
+    buildNew(){
+      console.log("build")
+
+        this.handle = this.handle2
+
+
+        this.radio = ''
+        this.form.url = ""
+        this.activeIndex = ""
+        this.hfxx = false
+        this.noEditcaidan = true
+        this.openLink_url = false
+        this.mycar = false
+
     },
     editMenu(){
         this.menuShow = true
         this.Edit = true
+        this.carData.button = true
         this.build = true
+        this.disabled = false
+        this.caidantitle = "菜单编辑"
         this.bianJi = "发布"
     },
     save(){
-      console.log("skdjs")
       this.dialogTableVisible = false
     },
     cancel(){
       this.dialogTableVisible = false
     },
     openLink(value){
+      console.log("value")
       console.log(value)
       if(value == '1'){
+
            this.openLink_url = true
            this.hfxx= false
-      }else{
+      }else if(value == '2'){
         this.openLink_url = false
          this.hfxx= true
       }
@@ -1076,50 +1117,42 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="scss" >
-// .el-message{
-//   left:10%;
-// }
-    .el-form el-form--label-top{
-      float: right;
-      width: 70%!important;
-    }
-    .el-popover{
-      text-align: center;
-    }
-    .el-dialog__header{
-      text-align: left;
-    }
-    .el-form--inline{
-      text-align: center;
-    }
-    .el-table .cell{
-      margin-left: 20px;
-      float: left;
-    }
-    .el-dialog__footer{
-      text-align:left;
-    }
-
+.el-popover{
+  text-align: center;
+}
 .edit{
-  .mytuwen{
-      .el-radio__label {
-          position: absolute;
-          margin-left: -35px;
-      }
-  }
-  .selectImg{
-    img{
-      width:100px;
-      height:100px;
+  .tuwen,.img,.audio,.viedio,.caidan{
+    .el-dialog{
+       text-align: left;
     }
-  }
-  .tuwen{
     .el-dialog__body{
           text-align: left;
     }
     .pagination{
           margin: 17px 0 0 -6px;
-           text-align: center;
+           text-align: right;
+    }
+    .el-dialog__footer {
+        text-align: center;
+    }
+    .el-radio__label{
+        padding-left: 1px;
+    }
+  }
+  .audio{
+    .audioUrl{
+      text-align:center;
+
+    }
+  }
+  .img,.viedio{
+    img{
+      width:60px;
+      height:60px;
+    }
+    video{
+      width:100px;
+      height:100px;
     }
   }
   width:100%;
@@ -1164,6 +1197,7 @@ export default {
     width:100%;
     // background:seagreen;
     // height:400px;
+
     .con{
       width:75%;
       margin-left:25%;
@@ -1177,17 +1211,20 @@ export default {
         line-height: 68px;
         text-align: left;
         .menu_xq_wz{
-          margin:0 10px;
+            font-size: 17px;
+            margin: 0 53px;
+            font-weight: bold;
         }
       }
-      .el-form{
+      .caidan{
         width:70%;
         margin: 30px 42px;
         .el-form-item{
           height:40px;
           .el-button--small{
             float: left;
-            padding: 9px 30px;
+            padding: 9px 15px;
+            margin-right: 20px;
           }
           .el-button--text{
             float:left;
